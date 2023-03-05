@@ -1,0 +1,11 @@
+{
+    "date": [1],
+    "sess": [1],
+    "price": [2],
+    "real_name": [1],
+    "nick_name": "施嘉宏",
+    "ticket_num": 3,
+    "driver_path": "./chromedriver.exe",
+    "damai_url": "https://www.damai.cn/",
+    "target_url": "https://m.damai.cn/damai/detail/item.html?itemId=704494827883&spm=a2o71.category.itemlist.ditem_3"
+}
