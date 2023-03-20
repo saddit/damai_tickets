@@ -89,10 +89,9 @@ class Concert(object):
         prefs = {"profile.managed_default_content_settings.images": 2,
                  "profile.managed_default_content_settings.javascript": 1,
                  'permissions.default.stylesheet': 2}
-        mobile_emulation = { "deviceName": "Nexus 6" }
+        mobile_emulation = {"deviceName": "Nexus 6"}
         options.add_experimental_option("prefs", prefs)
         options.add_experimental_option("mobileEmulation", mobile_emulation)
-        
 
         # 更换等待策略为不等待浏览器加载完全就进行下一步操作
         capa = DesiredCapabilities.CHROME
@@ -166,25 +165,14 @@ class Concert(object):
             sleep(0.1)
             buybutton.click()
             box = WebDriverWait(self.driver, 2, 0.1).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, '.pop-content .container')))
+                EC.presence_of_element_located((By.CSS_SELECTOR, '.sku-pop-wrapper')))
 
             try:
-                selects = box.find_elements(
-                    by=By.CLASS_NAME, value='date-section')  # 日期、场次和票档进行定位
-                date = None  # 有的演出没有日期的选项
-                for item in selects:
-                    try:
-                        if item.find_element(by=By.CLASS_NAME, value='title-text').text == '日期':
-                            date = item
-                            print('\t日期定位成功')
-                        elif item.find_element(by=By.CLASS_NAME, value='title-text').text == '场次':
-                            session = item
-                            print('\t场次定位成功')
-                        elif item.find_element(by=By.CLASS_NAME, value='title-text').text == '票档':
-                            price = item
-                            print('\t票档定位成功')
-                    except exceptions.NoSuchElementException:
-                        continue
+                session = WebDriverWait(self.driver, 2, 0.1).until(
+                    EC.presence_of_element_located((By.CLASS_NAME, 'sku-times-card')))    # 日期、场次和票档进行定位
+                price = WebDriverWait(self.driver, 2, 0.1).until(
+                    EC.presence_of_element_located((By.CLASS_NAME, 'sku-tickets-card')))  # 日期、场次和票档进行定位
+                date = None                                      # 暂不支持日期
 
                 toBeClicks = []
 
@@ -199,10 +187,11 @@ class Concert(object):
 
                 # 选定场次('select_right_list_item')#选定场次
                 session_list = session.find_elements(
-                    by=By.CLASS_NAME, value='prop-item')
+                    by=By.CLASS_NAME, value='bui-dm-sku-card-item')
                 # print('可选场次数量为：{}'.format(len(session_list)))
                 for i in self.session:  # 根据优先级选择一个可行场次
                     j: WebElement = session_list[i-1]
+                    # TODO 不确定已满的场次带的是什么Tag
                     k = self.isClassPresent(j, 'item-text-tag', True)
                     if k:  # 如果找到了带presell的类
                         if k.text == '无票':
@@ -218,11 +207,11 @@ class Concert(object):
                         break
 
                 price_list = price.find_elements(
-                    by=By.CLASS_NAME, value='prop-item')  # 选定票档
+                    by=By.CLASS_NAME, value='bui-dm-sku-card-item')  # 选定票档
                 # print('可选票档数量为：{}'.format(len(price_list)))
                 for i in self.price:
                     j = price_list[i-1]
-                    k = self.isClassPresent(j, 'notticket')
+                    k = self.isClassPresent(j, 'item-tag')
                     if k:  # 存在notticket代表存在缺货登记，跳过
                         continue
                     else:
@@ -230,23 +219,22 @@ class Concert(object):
                         break
 
                 buybutton = box.find_element(
-                    by=By.CSS_SELECTOR, value='.price-button .button')
+                    by=By.CLASS_NAME, value='sku-footer-buy-button')
                 buybutton_text = buybutton.text
 
                 for i in toBeClicks:
                     i.click()
-                    sleep(0.1)
+                    sleep(0.05)
 
                 WebDriverWait(self.driver, 1, 0.1).until(
-                    EC.presence_of_element_located((By.CLASS_NAME, 'buy-number-container')))
+                    EC.presence_of_element_located((By.CLASS_NAME, 'bui-dm-sku-counter')))
 
             except Exception as e:
                 raise Exception(f"***Error: 选择日期or场次or票档不成功***: {e}")
 
             try:
-                # body > div:nth-child(8) > div > div > div.sku-bottom > div.buy-number-container > div > div.number-edit > div:nth-child(3) > div
                 ticket_num_up = box.find_element(
-                    by=By.CSS_SELECTOR, value='div.plus-enable')
+                    by=By.CLASS_NAME, value='plus-enable')
             except:
                 if buybutton_text == "选座购买":  # 选座购买没有增减票数键
                     buybutton.click()
@@ -274,8 +262,9 @@ class Concert(object):
             WebDriverWait(self.driver, 2, 0.1)\
                 .until(EC.presence_of_element_located((By.XPATH, '//*[@id="dmViewerBlock_DmViewerBlock"]/div[2]/div/div')))\
                 .click()
-            
-            comfirmBtn = self.driver.find_element(By.XPATH, '//*[@id="dmOrderSubmitBlock_DmOrderSubmitBlock"]/div[2]/div/div[2]/div[3]/div[2]')
+
+            comfirmBtn = self.driver.find_element(
+                By.XPATH, '//*[@id="dmOrderSubmitBlock_DmOrderSubmitBlock"]/div[2]/div/div[2]/div[3]/div[2]')
             comfirmBtn.click()
             # 判断title是不是支付宝
             print(u"###等待跳转到--付款界面--，可自行刷新，若长期不跳转可选择-- CRTL+C --重新抢票###")
@@ -301,9 +290,7 @@ if __name__ == '__main__':
     except Exception as e:
         print(e)
         exit(1)
-        
-        
-        
+
     while True:
         try:
             con.choose_ticket()
