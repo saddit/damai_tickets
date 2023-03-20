@@ -3,6 +3,11 @@
 基于 [AnTi-anti/damai_ticket](https://github.com/AnTi-anti/damai_ticket) 开源版本进行修改
 
 > 2023.03.04 修改使抢票脚本对部分演唱会有效
+> 
+> 2023.03.20 对应页面更新了class_name, 但是出现新机制触发机器验证无法完成下单
+>
+> ![image](https://user-images.githubusercontent.com/55338151/226281976-a3fb3bf8-5b02-4c1d-97d1-367ad06d6de3.png)
+
 
 ## 配置文件
 
