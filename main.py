@@ -92,7 +92,7 @@ class Concert(object):
         mobile_emulation = {"deviceName": "Nexus 6"}
         options.add_experimental_option("prefs", prefs)
         options.add_experimental_option("mobileEmulation", mobile_emulation)
-
+        options.add_argument("--disable-blink-features=AutomationControlled")
         # 更换等待策略为不等待浏览器加载完全就进行下一步操作
         capa = DesiredCapabilities.CHROME
         capa["pageLoadStrategy"] = "none"
@@ -260,7 +260,7 @@ class Concert(object):
     def check_order(self):
         if self.status in [3, 4, 5]:
             WebDriverWait(self.driver, 2, 0.1)\
-                .until(EC.presence_of_element_located((By.XPATH, '//*[@id="dmViewerBlock_DmViewerBlock"]/div[2]/div/div')))\
+                .until(EC.presence_of_element_located((By.CLASS_NAME, 'icondanxuan-weixuan_')))\
                 .click()
 
             comfirmBtn = self.driver.find_element(

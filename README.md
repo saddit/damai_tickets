@@ -6,7 +6,15 @@
 > 
 > 2023.03.20 对应页面更新了class_name, 但是出现新机制触发机器验证无法完成下单
 >
-> ![image](https://user-images.githubusercontent.com/55338151/226281976-a3fb3bf8-5b02-4c1d-97d1-367ad06d6de3.png)
+>
+> 2023.03.23 感谢 @wuliang9524 提供的解决方案, 需要修改chromedriver以隐藏爬虫标志
+
+## Chromedriver 修改
+
+1. 下载Hexedit或者使用Vscode中的Hexedit插件
+2. 使用Hexedit打开chromedriver.exe 
+3. 搜索 `$cdc_`
+4. 更改为任意其他字符串，如`$cxx_`
 
 
 ## 配置文件
